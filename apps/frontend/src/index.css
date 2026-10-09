@@ -1,0 +1,38 @@
+:root {
+  --bg: #f7f4ee;
+  --surface: #ffffff;
+  --border: #e7e2d8;
+  --border-soft: #efe9dd;
+  --text: #1f1b16;
+  --muted: #8a8277;
+  --accent: #c17817;
+  --good: #2f8a78;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Work Sans', system-ui, sans-serif;
+}
+
+a {
+  color: var(--accent);
+}
+
+a:hover {
+  color: #944f0c;
+}
+
+.mono {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.heading {
+  font-family: 'Sora', system-ui, sans-serif;
+}
