@@ -12,6 +12,7 @@ on:
       - "terraform/environments/**"
       - "terraform/modules/**"
       - ".github/workflows/deploy-dev.yml"
+  workflow_dispatch: {}
 
 permissions:
   contents: read
