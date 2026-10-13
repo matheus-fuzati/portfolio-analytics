@@ -1,0 +1,15 @@
+config {
+  type: "view",
+  schema: dataform.projectConfig.vars.reporting_dataset,
+  tags: ["portfolio_analytics"],
+  description: "Serve GET /api/contact/funnel (passo do funil). Grão: event_date, user_pseudo_id — os flags são por dia; o backend faz LOGICAL_OR de novo por user_pseudo_id no range do request (um usuário que visita num dia e converte em outro continua contando certo no funil do range inteiro)."
+}
+
+SELECT
+  event_date,
+  user_pseudo_id,
+  LOGICAL_OR(event_name = 'page_view') AS visitou,
+  LOGICAL_OR(event_name = 'select_content') AS clicou_projeto,
+  LOGICAL_OR(event_name IN ('contact_click', 'cv_print_click')) AS converteu
+FROM ${ref("stg_portfolio_events")}
+GROUP BY event_date, user_pseudo_id

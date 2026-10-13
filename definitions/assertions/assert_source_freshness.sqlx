@@ -1,0 +1,17 @@
+config {
+  type: "assertion",
+  tags: ["portfolio_analytics"],
+  description: "Falha se a tabela sharded de ontem (events_YYYYMMDD) ainda não existir no dataset do GA4 export — sinal de atraso na export diária do Google (mirror do assert_source_freshness do billing-platform, sem o caso multi-conta: aqui só existe uma origem)."
+}
+
+js {
+  const c = require("includes/constants");
+}
+
+SELECT yesterday_suffix
+FROM UNNEST([FORMAT_DATE('%Y%m%d', DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))]) AS yesterday_suffix
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM ${c.ga4InformationSchemaTables()}
+  WHERE table_name = CONCAT('events_', FORMAT_DATE('%Y%m%d', DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)))
+)

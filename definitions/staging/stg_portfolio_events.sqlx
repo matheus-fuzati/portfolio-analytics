@@ -1,0 +1,27 @@
+config {
+  type: "table",
+  schema: dataform.projectConfig.vars.staging_dataset,
+  tags: ["portfolio_analytics"],
+  description: "GA4 export achatado e tipado: 1 UNNEST(event_params) por linha, só pros event_name que as views de reporting usam (includes/constants.js). Full refresh a cada run — volume de um site pessoal cabe inteiro em segundos; sem incremental/dedup, diferente do billing-platform (multi-conta, alto volume, reexport). Fronteira: nenhuma view de reporting lê events_* direto, só esta tabela."
+}
+
+js {
+  const c = require("includes/constants");
+}
+
+SELECT
+  PARSE_DATE('%Y%m%d', event_date) AS event_date,
+  TIMESTAMP_MICROS(event_timestamp) AS event_timestamp,
+  event_name,
+  user_pseudo_id,
+  (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'item_id') AS item_id,
+  (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'image') AS image,
+  (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'channel') AS channel,
+  (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'placement') AS placement,
+  (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'locale') AS locale,
+  (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'page_location') AS page_location,
+  (SELECT value.int_value FROM UNNEST(event_params) WHERE key = 'engagement_time_msec')
+    AS engagement_time_msec
+FROM ${c.ga4EventsTable()}
+WHERE ${c.lookbackFilter()}
+  AND event_name IN (${c.relevantEventNamesList()})

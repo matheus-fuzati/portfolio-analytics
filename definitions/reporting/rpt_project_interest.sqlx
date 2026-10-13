@@ -1,0 +1,15 @@
+config {
+  type: "view",
+  schema: dataform.projectConfig.vars.reporting_dataset,
+  tags: ["portfolio_analytics"],
+  description: "Serve GET /api/projects/interest. Grão: event_date, item_id, event_name — o backend soma por item_id/event_name no range de datas do request (SUM(event_count), não recontagem de linhas), igual a query antiga fazia direto em events_*."
+}
+
+SELECT
+  event_date,
+  item_id,
+  event_name,
+  COUNT(*) AS event_count
+FROM ${ref("stg_portfolio_events")}
+WHERE event_name IN ('select_content', 'project_gallery_open')
+GROUP BY event_date, item_id, event_name

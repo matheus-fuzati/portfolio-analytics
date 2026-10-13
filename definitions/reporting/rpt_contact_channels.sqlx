@@ -1,0 +1,13 @@
+config {
+  type: "view",
+  schema: dataform.projectConfig.vars.reporting_dataset,
+  tags: ["portfolio_analytics"],
+  description: "Serve o by_channel de GET /api/contact/funnel. 1 linha por contact_click — não agrega usuário aqui de propósito: COUNT(DISTINCT user_pseudo_id) só é correto feito pelo backend sobre o range final (agregar distinct por dia na view e somar depois contaria 2x quem clicou em dias diferentes)."
+}
+
+SELECT
+  event_date,
+  channel,
+  user_pseudo_id
+FROM ${ref("stg_portfolio_events")}
+WHERE event_name = 'contact_click'

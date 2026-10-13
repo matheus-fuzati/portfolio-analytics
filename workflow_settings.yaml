@@ -1,0 +1,18 @@
+dataformCoreVersion: 3.0.30
+
+defaultProject: portfolio-analytics-fuzati
+defaultLocation: US
+defaultDataset: portfolio_analytics_dataform
+defaultAssertionDataset: portfolio_analytics_dataform_assertions
+
+vars:
+  # GA4->BigQuery export do site do portfólio (ver specs/05-analytics-spec.md no repo do
+  # site: GA4 G-NFTH0GYHQQ / GTM GTM-WFGD5HGP, status ao vivo em produção).
+  ga4_project: portfolio-analytics-fuzati
+  ga4_dataset: analytics_558211221
+  staging_dataset: portfolio_analytics_dataform
+  reporting_dataset: portfolio_analytics_dataform
+  # Volume de um site pessoal: cabe inteiro em segundos, sem incremental/dedup (diferente
+  # do billing-platform, que tem multi-conta + alto volume). 400 dias é só pra não escanear
+  # a tabela inteira pra sempre — folga de sobra sobre o maior período do painel (90d).
+  lookback_days: "400"

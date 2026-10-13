@@ -1,0 +1,15 @@
+config {
+  type: "view",
+  schema: dataform.projectConfig.vars.reporting_dataset,
+  tags: ["portfolio_analytics"],
+  description: "Serve GET /api/engagement/depth. 1 linha por evento user_engagement/scroll — AVG/COUNTIF/COUNT DISTINCT ficam com o backend sobre o range do request, mesma semântica da query antiga contra events_* direto."
+}
+
+SELECT
+  event_date,
+  page_location,
+  user_pseudo_id,
+  event_name,
+  engagement_time_msec
+FROM ${ref("stg_portfolio_events")}
+WHERE event_name IN ('user_engagement', 'scroll')

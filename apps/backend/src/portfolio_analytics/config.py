@@ -7,8 +7,9 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="PORTFOLIO_ANALYTICS_")
 
     gcp_project: str = "portfolio-analytics-fuzati"
-    # analytics_<property_id>, criado pelo link GA4->BigQuery.
-    bq_dataset: str = "analytics_558211221"
+    # Dataset do pipeline Dataform (workflow_settings.yaml), não o dataset bruto do GA4
+    # export — as views rpt_* que o backend lê vivem aqui.
+    dataform_dataset: str = "portfolio_analytics_dataform"
     cors_origins: list[str] = ["http://localhost:5173"]
 
 
