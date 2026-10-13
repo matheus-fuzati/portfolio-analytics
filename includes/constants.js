@@ -14,10 +14,6 @@ function ga4EventsTable() {
   return `\`${V.ga4_project}.${V.ga4_dataset}.events_*\``;
 }
 
-function ga4InformationSchemaTables() {
-  return `\`${V.ga4_project}.${V.ga4_dataset}.INFORMATION_SCHEMA.TABLES\``;
-}
-
 function lookbackFilter() {
   return (
     `_TABLE_SUFFIX BETWEEN FORMAT_DATE('%Y%m%d', DATE_SUB(CURRENT_DATE(), INTERVAL ${LOOKBACK_DAYS} DAY)) ` +
@@ -45,7 +41,6 @@ function relevantEventNamesList() {
 module.exports = {
   LOOKBACK_DAYS,
   ga4EventsTable,
-  ga4InformationSchemaTables,
   lookbackFilter,
   RELEVANT_EVENT_NAMES,
   relevantEventNamesList,
