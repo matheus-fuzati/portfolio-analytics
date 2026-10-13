@@ -15,7 +15,7 @@ variable "region" {
 
 variable "github_repo" {
   type    = string
-  default = "matheusfuzati/portfolio-analytics"
+  default = "matheus-fuzati/portfolio-analytics"
 }
 
 variable "state_bucket" {

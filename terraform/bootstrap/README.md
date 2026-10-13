@@ -80,8 +80,8 @@ obrigatório (GitHub Free em repo privado não oferece isso); servem só para es
 secrets de WIF valem:
 
 ```bash
-gh api -X PUT repos/matheusfuzati/portfolio-analytics/environments/dev-deploy
-gh api -X PUT repos/matheusfuzati/portfolio-analytics/environments/prod-deploy
+gh api -X PUT repos/matheus-fuzati/portfolio-analytics/environments/dev-deploy
+gh api -X PUT repos/matheus-fuzati/portfolio-analytics/environments/prod-deploy
 ```
 
 Por fim: criar a branch `develop` a partir de `main` e dar push — o primeiro push em `develop`

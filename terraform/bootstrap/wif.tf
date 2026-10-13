@@ -1,4 +1,4 @@
-# Workload Identity Federation para o GitHub Actions do matheusfuzati/portfolio-analytics.
+# Workload Identity Federation para o GitHub Actions do matheus-fuzati/portfolio-analytics.
 # 1 pool, 2 providers: plan (read-only, qualquer ref) / apply (main + develop — fluxo de
 # promoção branch -> deploy dev (develop) -> PR develop->main -> deploy prod (main)).
 
