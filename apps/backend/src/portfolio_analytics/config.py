@@ -7,9 +7,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="PORTFOLIO_ANALYTICS_")
 
     gcp_project: str = "portfolio-analytics-fuzati"
-    # analytics_<property_id>, criado pelo link GA4->BigQuery — fica vazio até a
-    # primeira exportação diária aparecer e confirmarmos o nome real do dataset.
-    bq_dataset: str = ""
+    # analytics_<property_id>, criado pelo link GA4->BigQuery.
+    bq_dataset: str = "analytics_558211221"
     cors_origins: list[str] = ["http://localhost:5173"]
 
 
