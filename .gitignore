@@ -9,5 +9,12 @@ apps/backend/.ruff_cache/
 apps/frontend/node_modules/
 apps/frontend/dist/
 
+# terraform
+terraform/**/.terraform/
+terraform/**/*.tfstate
+terraform/**/*.tfstate.backup
+terraform/**/terraform.tfvars
+!terraform/**/*.auto.tfvars.example
+
 # OS/editor
 .DS_Store

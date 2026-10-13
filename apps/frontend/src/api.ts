@@ -1,9 +1,12 @@
 import type { ContactFunnel, EngagementRow, ProjectInterestRow } from './types';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
+// Vazio por padrão: em produção o FastAPI serve o front e a API na mesma origem (ver
+// apps/backend/src/portfolio_analytics/main.py), então '/api/...' já basta. Só setar
+// VITE_API_BASE_URL quando o front roda separado do backend (ex.: `vite dev` local).
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
 
 async function getJson<T>(path: string, params: Record<string, string>): Promise<T> {
-  const url = new URL(`${API_BASE}${path}`);
+  const url = new URL(`${API_BASE}${path}`, window.location.origin);
   for (const [key, value] of Object.entries(params)) {
     url.searchParams.set(key, value);
   }

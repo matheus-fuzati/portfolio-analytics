@@ -1,0 +1,95 @@
+name: Deploy dev
+
+# Dispara em push em develop. terraform apply sempre antes do deploy da app (needs:).
+# Termina abrindo (idempotente) a PR develop -> main; merge é manual.
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - "apps/**"
+      - "Dockerfile"
+      - "terraform/environments/**"
+      - "terraform/modules/**"
+      - ".github/workflows/deploy-dev.yml"
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+concurrency: deploy-dev
+
+env:
+  REGION: us-central1
+  AR: us-central1-docker.pkg.dev/portfolio-analytics-fuzati/apps
+
+jobs:
+  terraform-apply:
+    runs-on: ubuntu-latest
+    environment: dev-deploy
+    defaults:
+      run:
+        working-directory: terraform/environments/dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER_APPLY }}
+          service_account: ${{ secrets.WIF_SA_APPLY }}
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~> 1.9"
+
+      - run: terraform init -input=false
+      - run: terraform apply -input=false -auto-approve
+
+  apps-deploy:
+    needs: terraform-apply
+    runs-on: ubuntu-latest
+    environment: dev-deploy
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER_APPLY }}
+          service_account: ${{ secrets.WIF_SA_APPLY }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: docker auth
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      # serviço único: a imagem já embute o build do frontend (ver Dockerfile da raiz).
+      - name: build & push
+        run: |
+          IMG="${AR}/portfolio-analytics:${GITHUB_SHA::12}"
+          docker build -t "$IMG" .
+          docker push "$IMG"
+          echo "IMG=$IMG" >> "$GITHUB_ENV"
+
+      - name: deploy dev
+        run: |
+          gcloud run deploy portfolio-analytics-dev \
+            --region "$REGION" --image "$IMG" --quiet
+
+  promote-to-main:
+    needs: [terraform-apply, apps-deploy]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: abre PR develop -> main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr create --base main --head develop \
+            --title "Promote develop -> main ($(date +%Y-%m-%d))" \
+            --body "Promoção automática — dev aplicado com sucesso (run ${{ github.run_id }})." \
+            || echo "PR develop->main já existe, nada a fazer."
